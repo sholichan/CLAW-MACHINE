@@ -24,6 +24,7 @@ export default class MainScene extends Phaser.Scene {
     congratsGift!: any
     fps: any
     speed: any
+    deltaTime: any
     tween: any
     popup!: any
     isGrab!: any
@@ -164,13 +165,110 @@ export default class MainScene extends Phaser.Scene {
         };
 
         this.time.addEvent({ delay: 50, callback: randomRound, callbackScope: this, repeat: 16 });
+
+        this.setupInputListeners()
     }
+
+
+    setupInputListeners() {
+        this.buttonGift.on('pointerdown', this.buttonGiftOn, this);
+        this.buttonKembali.on('pointerdown', this.buttonKembaliOn, this);
+        this.buttonOk.on('pointerdown', this.buttonOkOn, this);
+        this.buttonMusic.on('pointerdown', this.buttonMusicOn, this);
+        this.buttonRight.on('pointerdown', this.buttonRightOn, this);
+        this.buttonRight.on('pointerup', this.buttonRightOff, this);
+        this.buttonLeft.on('pointerdown', this.buttonLeftOn, this);
+        this.buttonLeft.on('pointerup', this.buttonLeftOff, this);
+        this.buttonGrab.on('pointerdown', this.buttonGrabOn, this);
+        this.buttonGrab.on('pointerup', this.buttonGrabOff, this);
+    }
+
+    buttonGiftOn() {
+        this.getGift.setVisible(true)
+        this.buttonKembali.setVisible(true)
+        this.tween = this.tweens.add(
+            {
+                targets: [this.getGift, this.buttonKembali],
+                scaleX: 0.35,
+                scaleY: 0.35,
+                duration: 1000,
+                ease: 'Elastic',
+                repeat: 0,
+            }
+        )
+    }
+    buttonKembaliOn() {
+        this.buttonKembali.setVisible(false)
+        this.getGift.setVisible(false)
+        this.buttonKembali.setScale(0.1)
+        this.getGift.setScale(0.1)
+    }
+    buttonOkOn() {
+        this.buttonOk.setVisible(false)
+        this.congrats.setVisible(false)
+        this.buttonOk.setScale(0.1)
+        this.congrats.setScale(0.1)
+        this.congratsGift.setVisible(false)
+    }
+    buttonMusicOn() {
+        console.log(this.isPlayMusic);
+        if (this.isPlayMusic = true) {
+            this.backsound.play()
+            this.isPlayMusic = true
+        }
+
+        console.log(this.isPlayMusic);
+    }
+    buttonRightOn() {
+        if (this.claw.y == 200) {
+            this.claw.setVelocityX(this.speed * this.deltaTime)
+            this.buttonRight.setScale(0.35, 0.3)
+            this.movelr.play()
+        }
+    }
+    buttonRightOff() {
+        if (this.claw.y == 200) {
+            this.claw.setVelocityX(0)
+            this.buttonRight.setScale(0.35)
+            this.movelr.stop()
+        }
+    }
+    buttonLeftOn() {
+        if (this.claw.y == 200) {
+            this.claw.setVelocityX(-this.speed * this.deltaTime)
+            this.buttonLeft.setScale(0.35, 0.3)
+            this.movelr.play()
+        }
+    }
+    buttonLeftOff() {
+        if (this.claw.y == 200) {
+            this.claw.setVelocityX(0)
+            this.buttonLeft.setScale(0.35)
+            this.movelr.stop()
+        }
+    }
+    buttonGrabOn() {
+        if (this.claw.y == 200) {
+            this.buttonGrab.setScale(0.35, 0.3)
+            this.isGravity = Phaser.Math.Between(0, 1)
+            this.claw.setVelocityY(this.speed * this.deltaTime)
+            this.movelr.play()
+        }
+    }
+    buttonGrabOff() {
+        if (this.claw.y > 200) {
+            this.movelr.play()
+            this.buttonGrab.setScale(0.35)
+        }
+    }
+
 
 
     update(time: any, delta: number) {
         const giftArr: any = []
         const pointer = this.input.activePointer;
         this.fps = this.game.loop.actualFps
+        this.deltaTime = delta
 
 
         // this.text1.setText([
@@ -181,97 +279,6 @@ export default class MainScene extends Phaser.Scene {
         //     `Delta time:${delta}`
         // ]);
 
-        //Buttons
-        this.buttonGift.on('pointerdown', () => {
-            this.getGift.setVisible(true)
-            this.buttonKembali.setVisible(true)
-            this.tween = this.tweens.add(
-                {
-                    targets: [this.getGift, this.buttonKembali],
-                    scaleX: 0.35,
-                    scaleY: 0.35,
-                    duration: 1000,
-                    ease: 'Elastic',
-                    repeat: 0,
-                }
-            )
-        })
-
-        this.buttonKembali.on('pointerdown', () => {
-            this.buttonKembali.setVisible(false)
-            this.getGift.setVisible(false)
-            this.buttonKembali.setScale(0.1)
-            this.getGift.setScale(0.1)
-        })
-        this.buttonOk.on('pointerdown', () => {
-            this.buttonOk.setVisible(false)
-            this.congrats.setVisible(false)
-            this.buttonOk.setScale(0.1)
-            this.congrats.setScale(0.1)
-            this.congratsGift.setVisible(false)
-        })
-
-        this.buttonMusic.on('pointerdown', () => {
-            if (this.isPlayMusic = true) {
-                this.backsound.stop()
-                this.isPlayMusic = false
-            } else {
-                this.backsound.play()
-                this.isPlayMusic = false
-            }
-        })
-        this.buttonMusic.on('pointerup', () => {
-            if (this.isPlayMusic = false) {
-                this.isPlayMusic = true
-            } else {
-                this.isPlayMusic = false
-            }
-        })
-
-        //Controls
-        this.buttonRight.on('pointerdown', () => {
-            if (this.claw.y == 200) {
-                this.claw.setVelocityX(this.speed * delta)
-                this.buttonRight.setScale(0.35, 0.3)
-                this.movelr.play()
-            }
-        })
-        this.buttonRight.on('pointerup', () => {
-            if (this.claw.y == 200) {
-                this.claw.setVelocityX(0)
-                this.buttonRight.setScale(0.35)
-                this.movelr.stop()
-            }
-        })
-        this.buttonLeft.on('pointerdown', () => {
-            if (this.claw.y == 200) {
-                this.claw.setVelocityX(-this.speed * delta)
-                this.buttonLeft.setScale(0.35, 0.3)
-                this.movelr.play()
-            }
-        })
-        this.buttonLeft.on('pointerup', () => {
-            if (this.claw.y == 200) {
-                this.claw.setVelocityX(0)
-                this.buttonLeft.setScale(0.35)
-                this.movelr.stop()
-            }
-        })
-
-        this.buttonGrab.on('pointerdown', () => {
-            if (this.claw.y == 200) {
-                this.buttonGrab.setScale(0.35, 0.3)
-                this.isGravity = Phaser.Math.Between(0, 1)
-                this.claw.setVelocityY(this.speed * delta)
-                this.movelr.play()
-            }
-        })
-        this.buttonGrab.on('pointerup', () => {
-            if (this.claw.y > 200) {
-                this.movelr.play()
-                this.buttonGrab.setScale(0.35)
-            }
-        })
 
 
         if (this.gifts) {
@@ -331,6 +338,8 @@ export default class MainScene extends Phaser.Scene {
             this.claw.setVelocity(0)
         }
     }
+
+
 
 
 }

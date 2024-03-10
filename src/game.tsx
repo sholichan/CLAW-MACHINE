@@ -14,6 +14,7 @@ const Game = () => {
       const initPhaser = async () => {
         const PhaserGame = new Phaser.Game({
           type: Phaser.AUTO,
+          antialias:true,
           backgroundColor: '#ffffff',
           scale: {
             parent: 'phaser-game',
