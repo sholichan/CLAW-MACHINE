@@ -40,7 +40,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         // CLAW MACHINE
         this.load.image('machine', 'assets/image/machine-01.png')
-        this.load.image('bg-machine', 'assets/image/bg-machine-01.png')
+        this.load.image('bg-machine', 'assets/image/bg-machine-01-01.png')
         this.load.image('congrats', 'assets/image/congrats-01.png')
         this.load.image('get-gift', 'assets/image/get-gift-01.png')
         this.load.image('buttonL', 'assets/image/buttonL-01.png')
