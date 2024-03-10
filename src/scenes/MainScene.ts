@@ -220,7 +220,7 @@ export default class MainScene extends Phaser.Scene {
         console.log(this.isPlayMusic);
     }
     buttonRightOn() {
-        if (this.claw.y == 200) {
+        if (this.claw.y == 200 && this.claw.x < this.cameras.main.width - 25 && this.claw.x > 25) {
             this.claw.setVelocityX(this.speed * this.deltaTime)
             this.buttonRight.setScale(0.35, 0.3)
             this.movelr.play()
@@ -234,7 +234,7 @@ export default class MainScene extends Phaser.Scene {
         }
     }
     buttonLeftOn() {
-        if (this.claw.y == 200) {
+        if (this.claw.y == 200 && this.claw.x < this.cameras.main.width - 25 && this.claw.x > 25) {
             this.claw.setVelocityX(-this.speed * this.deltaTime)
             this.buttonLeft.setScale(0.35, 0.3)
             this.movelr.play()
@@ -325,6 +325,13 @@ export default class MainScene extends Phaser.Scene {
                     )
                 }
             });
+        }
+
+        if (this.claw.x <= 50) {
+            this.claw.setX(50)
+        }
+        if (this.claw.x >= this.cameras.main.width - 50) {
+            this.claw.setX(this.cameras.main.width - 50)
         }
 
         if (this.claw.y >= 420) {
