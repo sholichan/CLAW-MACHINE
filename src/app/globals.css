@@ -18,11 +18,11 @@
 
 
 @font-face {
-  font-family: 'BebasNeue';
-  src: url('/assets/fonts/BebasNeue-Regular.woff') format('truetype');
+  font-family: 'Metropolis';
+  src: url('/assets/fonts/Metropolis-ExtraBold.otf');
 }
 
-body {
+/* body {
   font-family: 'BebasNeue', sans-serif;
 }
 
@@ -32,4 +32,4 @@ body {
   background: linear-gradient(to bottom,
       transparent,
       rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
-}
+} */

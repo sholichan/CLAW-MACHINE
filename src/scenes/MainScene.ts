@@ -30,6 +30,8 @@ export default class MainScene extends Phaser.Scene {
     isGrab!: any
     isPlayMusic!: any
     isGravity!: any
+    key!: Array<string>
+    description!: Array<string>
 
     backsound!: any
     congratsound!: any
@@ -53,8 +55,12 @@ export default class MainScene extends Phaser.Scene {
         this.isPlayMusic = true
         this.isGravity = true
 
-        this.text1 = this.add.text(26, 60, '', { color: '#000000', fontSize: 12 }).setDepth(50);
-        this.text2 = this.add.text(100, 200, '', { color: '#000000' }).setDepth(50);
+        this.text1 = this.add.text(26, 60, '', { color: '#000000', fontFamily: 'Metropolis', fontSize: 12 }).setDepth(50);
+        this.text2 = this.add.text(190, 360, '', { color: '#000000', fontFamily: 'Metropolis', fontSize: 20 })
+            .setOrigin(0.5)
+            .setScale(0.1)
+            .setVisible(false)
+            .setDepth(105);
 
         this.keyL = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
         this.keyR = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
@@ -126,7 +132,8 @@ export default class MainScene extends Phaser.Scene {
         this.claw.body.setCircle(this.claw.width / 5, this.claw.width / 3.5, this.claw.height - 120)
 
         const randomRound = () => {
-            const key = ['silver', 'gold', 'bronze', 'pln', 'pulsa', 'paket-data', 'vo-games']
+            this.key = ['silver', 'gold', 'bronze', 'pln', 'pulsa', 'paket-data', 'vo-games']
+            this.description = ['100.000', '670.000', '50.000', 'Voucher PLN', 'Voucher Pulsa', 'Paket Data', 'Voucher Games']
             const rand = Phaser.Math.Between(0, 6)
 
             // Create a group if it doesn't exist
@@ -149,12 +156,12 @@ export default class MainScene extends Phaser.Scene {
             const newRound = this.gifts.create(
                 Phaser.Math.Between(50, 300),
                 Phaser.Math.Between(310, 330),
-                key[rand]
+                this.key[rand]
             )
                 .setScale(0.35)
                 .setVelocityY(this.speed)
             // Give name
-            newRound.name = key[rand]
+            newRound.name = this.key[rand]
 
             // Enable circle collider for the round object
             newRound.body.setCircle(newRound.width / 2)
@@ -206,6 +213,8 @@ export default class MainScene extends Phaser.Scene {
     buttonOkOn() {
         this.buttonOk.setVisible(false)
         this.congrats.setVisible(false)
+        this.text2.setVisible(false)
+        this.text2.setScale(0.1)
         this.buttonOk.setScale(0.1)
         this.congrats.setScale(0.1)
         this.congratsGift.setVisible(false)
@@ -271,6 +280,7 @@ export default class MainScene extends Phaser.Scene {
         this.deltaTime = delta
 
 
+        //DEBUG
         // this.text1.setText([
         //     `x: ${pointer.worldX}`,
         //     `y: ${pointer.worldY}`,
@@ -278,7 +288,6 @@ export default class MainScene extends Phaser.Scene {
         //     `FPS:${this.fps}`,
         //     `Delta time:${delta}`
         // ]);
-
 
 
         if (this.gifts) {
@@ -310,6 +319,9 @@ export default class MainScene extends Phaser.Scene {
                         .setDepth(101)
                         .setVisible(true)
 
+                    this.text2.setText(this.description[this.key.indexOf(imageObject.name)])
+                    this.text2.setVisible(true)
+
                     this.congrats.setVisible(true)
                     this.buttonOk.setVisible(true)
                     this.congratsound.play()
@@ -318,6 +330,16 @@ export default class MainScene extends Phaser.Scene {
                             targets: [this.congrats, this.buttonOk, this.congratsGift],
                             scaleX: 0.35,
                             scaleY: 0.35,
+                            duration: 1000,
+                            ease: 'Elastic',
+                            repeat: 0,
+                        }
+                    )
+                    this.tween = this.tweens.add(
+                        {
+                            targets: [this.text2],
+                            scaleX: 1,
+                            scaleY: 1,
                             duration: 1000,
                             ease: 'Elastic',
                             repeat: 0,
