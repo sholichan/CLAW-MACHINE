@@ -28,8 +28,10 @@ export default class MainScene extends Phaser.Scene {
     popup!: any
     isGrab!: any
     isPlayMusic!: any
+    isGravity!: any
 
     backsound!: any
+    congratsound!: any
     movelr!: Phaser.Sound.BaseSound
 
     keyL!: Phaser.Input.Keyboard.Key
@@ -48,6 +50,7 @@ export default class MainScene extends Phaser.Scene {
         this.tween = null
         this.isGrab = false
         this.isPlayMusic = true
+        this.isGravity = true
 
         this.text1 = this.add.text(26, 60, '', { color: '#000000', fontSize: 12 }).setDepth(50);
         this.text2 = this.add.text(100, 200, '', { color: '#000000' }).setDepth(50);
@@ -59,6 +62,7 @@ export default class MainScene extends Phaser.Scene {
         this.backsound = this.sound.add('bs', { loop: true, volume: 0.5 })
         this.backsound.play()
         this.movelr = this.sound.add('movelr', { loop: true })
+        this.congratsound = this.sound.add('congratsound', { loop: false })
 
 
         this.congrats = this.add.image(cam.width / 2, cam.height / 2, 'congrats')
@@ -113,25 +117,12 @@ export default class MainScene extends Phaser.Scene {
             .setDepth(102)
             .setVisible(false)
             .setInteractive()
-        // this.lever = this.add.image(190, 600, 'lever')
-        //     .setScale(0.5)
-        //     .setOrigin(0.5, 1)
-        //     .setInteractive()
         this.claw = this.physics.add.image(cam.width / 2, 200, 'claw')
             .setScale(0.35)
             .setOrigin(0.5, 1)
             .setDepth(-50)
         this.claw.body.allowGravity = false
         this.claw.body.setCircle(this.claw.width / 5, this.claw.width / 3.5, this.claw.height - 120)
-
-        // this.clawCenter = this.physics.add.image(cam.width / 2, 200, 'claw-center')
-        //     .setScale(0.35)
-        //     .setOrigin(0.5, 1)
-        //     .setDepth(-50)
-        // this.clawCenter.body.allowGravity = false
-
-        //rotation lever angle
-        // const angleLever = Phaser.Math.Angle.Between(x,y,)
 
         const randomRound = () => {
             const key = ['silver', 'gold', 'bronze', 'pln', 'pulsa', 'paket-data', 'vo-games']
@@ -182,13 +173,13 @@ export default class MainScene extends Phaser.Scene {
         this.fps = this.game.loop.actualFps
 
 
-        this.text1.setText([
-            `x: ${pointer.worldX}`,
-            `y: ${pointer.worldY}`,
-            `isDown: ${pointer.isDown}`,
-            `FPS:${this.fps}`,
-            `Delta time:${delta}`
-        ]);
+        // this.text1.setText([
+        //     `x: ${pointer.worldX}`,
+        //     `y: ${pointer.worldY}`,
+        //     `isDown: ${pointer.isDown}`,
+        //     `FPS:${this.fps}`,
+        //     `Delta time:${delta}`
+        // ]);
 
         //Buttons
         this.buttonGift.on('pointerdown', () => {
@@ -233,34 +224,34 @@ export default class MainScene extends Phaser.Scene {
             if (this.isPlayMusic = false) {
                 this.isPlayMusic = true
             } else {
-                this.isPlayMusic =false
+                this.isPlayMusic = false
             }
         })
 
         //Controls
         this.buttonRight.on('pointerdown', () => {
-            if (pointer.isDown && this.claw.y == 200) {
+            if (this.claw.y == 200) {
                 this.claw.setVelocityX(this.speed * delta)
                 this.buttonRight.setScale(0.35, 0.3)
                 this.movelr.play()
             }
         })
         this.buttonRight.on('pointerup', () => {
-            if (pointer.isDown == false && this.claw.y == 200) {
+            if (this.claw.y == 200) {
                 this.claw.setVelocityX(0)
                 this.buttonRight.setScale(0.35)
                 this.movelr.stop()
             }
         })
         this.buttonLeft.on('pointerdown', () => {
-            if (pointer.isDown && this.claw.y == 200) {
+            if (this.claw.y == 200) {
                 this.claw.setVelocityX(-this.speed * delta)
                 this.buttonLeft.setScale(0.35, 0.3)
                 this.movelr.play()
             }
         })
         this.buttonLeft.on('pointerup', () => {
-            if (pointer.isDown == false && this.claw.y == 200) {
+            if (this.claw.y == 200) {
                 this.claw.setVelocityX(0)
                 this.buttonLeft.setScale(0.35)
                 this.movelr.stop()
@@ -268,14 +259,15 @@ export default class MainScene extends Phaser.Scene {
         })
 
         this.buttonGrab.on('pointerdown', () => {
-            if (pointer.isDown && this.claw.y == 200) {
-                this.claw.setVelocityY(this.speed * delta)
+            if (this.claw.y == 200) {
                 this.buttonGrab.setScale(0.35, 0.3)
+                this.isGravity = Phaser.Math.Between(0, 1)
+                this.claw.setVelocityY(this.speed * delta)
                 this.movelr.play()
             }
         })
         this.buttonGrab.on('pointerup', () => {
-            if (pointer.isDown == false && this.claw.y > 200) {
+            if (this.claw.y > 200) {
                 this.movelr.play()
                 this.buttonGrab.setScale(0.35)
             }
@@ -292,7 +284,7 @@ export default class MainScene extends Phaser.Scene {
                         // Code to execute when claw and object collide
                         giftArr.push(imageObject)
                         // console.log(giftArr.map((i) => i.name))
-                        imageObject.body!.allowGravity = false
+                        imageObject.body!.allowGravity = this.isGravity
                         this.claw.setVelocityY(-this.speed * delta)
                         giftArr[0].setY(this.claw.y)
                         giftArr[0].setX(this.claw.x)
@@ -313,6 +305,7 @@ export default class MainScene extends Phaser.Scene {
 
                     this.congrats.setVisible(true)
                     this.buttonOk.setVisible(true)
+                    this.congratsound.play()
                     this.tween = this.tweens.add(
                         {
                             targets: [this.congrats, this.buttonOk, this.congratsGift],
@@ -338,18 +331,7 @@ export default class MainScene extends Phaser.Scene {
             this.claw.setVelocity(0)
         }
     }
-    // tweenPopup() {
-    //     this.tweens.add(
-    //         {
-    //             targets: this.popup,
-    //             scaleX: 0.1,
-    //             scaleY: 0.1,
-    //             duration: 1000,
-    //             ease: 'Elastic',
-    //             repeat: 0,
-    //         }
-    //     )
-    // }
+
 
 }
 

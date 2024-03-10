@@ -74,6 +74,7 @@ export default class PreloadScene extends Phaser.Scene {
         
         //SOUND
         this.load.audio('bs','assets/audio/backsound.mp3')
+        this.load.audio('congratsound','assets/audio/congratsound.mp3')
         this.load.audio('movelr','assets/audio/movelr2.mp3')
 
     }
