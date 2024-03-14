@@ -37,6 +37,8 @@ export default class MainScene extends Phaser.Scene {
     backsound!: any
     congratsound!: any
     movelr!: Phaser.Sound.BaseSound
+    moveUpDown!: Phaser.Sound.BaseSound
+    fall!: Phaser.Sound.BaseSound
 
     keyL!: Phaser.Input.Keyboard.Key
     keyR!: Phaser.Input.Keyboard.Key
@@ -53,9 +55,9 @@ export default class MainScene extends Phaser.Scene {
         this.speed = 3
         this.tween = null
         this.isGrab = false
-        this.isPlayMusic = true
-        this.isGravity = 1
-        this.heightRand = Phaser.Math.Between(210, 300)
+        this.isPlayMusic = false
+        this.isGravity = Phaser.Math.Between(0, 1)
+        this.heightRand = Phaser.Math.Between(210, 250)
 
 
         this.text1 = this.add.text(26, 60, '', { color: '#000000', fontFamily: 'Metropolis', fontSize: 12 }).setDepth(50);
@@ -72,7 +74,9 @@ export default class MainScene extends Phaser.Scene {
         this.backsound = this.sound.add('bs', { loop: true, volume: 0.5 })
         this.backsound.play()
         this.movelr = this.sound.add('movelr', { loop: true })
+        this.moveUpDown = this.sound.add('moveupdown', { loop: true })
         this.congratsound = this.sound.add('congratsound', { loop: false })
+        this.fall = this.sound.add('fall', { loop: false, volume:5 })
 
 
         this.congrats = this.add.image(cam.width / 2, cam.height / 2, 'congrats')
@@ -224,11 +228,11 @@ export default class MainScene extends Phaser.Scene {
     }
     buttonMusicOn() {
         if (this.isPlayMusic = true) {
-            this.backsound.pause()
+            this.backsound.stop()
             this.isPlayMusic = false
         }
         else {
-            this.backsound.resume()
+            this.backsound.play()
             this.isPlayMusic = true
         }
         console.log(this.isPlayMusic);
@@ -267,12 +271,12 @@ export default class MainScene extends Phaser.Scene {
             console.log(this.isGravity);
             this.buttonGrab.setScale(0.35, 0.3)
             this.claw.setVelocityY(this.speed * this.deltaTime)
-            this.movelr.play()
+            this.moveUpDown.play()
         }
     }
     buttonGrabOff() {
         if (this.claw.y > 200) {
-            this.movelr.play()
+            this.moveUpDown.play()
             this.buttonGrab.setScale(0.35)
         }
     }
@@ -306,11 +310,12 @@ export default class MainScene extends Phaser.Scene {
 
                 if (this.claw.y > 201 && imageObject) {
                     this.physics.overlap(this.claw, object, () => {
-                        // this.movelr.play()
                         // Code to execute when claw and object collide
                         giftArr.push(imageObject)
                         // console.log(giftArr.map((i) => i.name))
                         if (this.claw.y < this.heightRand && this.isGravity == 1) {
+                            this.fall.play()
+                            this.moveUpDown.stop()
                             imageObject.body!.allowGravity = 1
                             giftArr[0].setY(this.claw.y + 20)
                             giftArr[0].setX(this.claw.x)
@@ -321,19 +326,7 @@ export default class MainScene extends Phaser.Scene {
                             giftArr[0].setY(this.claw.y)
                             giftArr[0].setX(this.claw.x)
                         }
-                        // if (this.isGravity = 1) {
-                        // } else if (this.isGravity = 0) {
-                        //     imageObject.body!.allowGravity = 0
-                        //     this.claw.setVelocityY(-this.speed * delta)
-                        //     giftArr[0].setY(this.claw.y)
-                        //     giftArr[0].setX(this.claw.x)
-                        // } else {
-                        //     imageObject.body!.allowGravity = 0
-                        //     this.claw.setVelocityY(-this.speed * delta)
-                        //     giftArr[0].setY(this.claw.y)
-                        //     giftArr[0].setX(this.claw.x)
-                        // }
-
+                        
                     });
                 }
 
@@ -389,15 +382,15 @@ export default class MainScene extends Phaser.Scene {
 
         if (this.claw.y >= 420) {
             this.claw.setVelocityY(-this.speed * delta)
-            this.movelr.play()
+            this.moveUpDown.play()
         }
 
         if (this.claw.y < 200) {
-            this.movelr.stop()
+            this.moveUpDown.stop()
             this.claw.setY(200)
             this.claw.setVelocity(0)
             this.isGravity = Phaser.Math.Between(0, 1)
-            this.heightRand = Phaser.Math.Between(210, 300)
+            this.heightRand = Phaser.Math.Between(210, 250)
 
         }
     }
