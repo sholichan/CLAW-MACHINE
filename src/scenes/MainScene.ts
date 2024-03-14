@@ -32,6 +32,7 @@ export default class MainScene extends Phaser.Scene {
     isGravity!: any
     key!: Array<string>
     description!: Array<string>
+    heightRand: any
 
     backsound!: any
     congratsound!: any
@@ -53,7 +54,9 @@ export default class MainScene extends Phaser.Scene {
         this.tween = null
         this.isGrab = false
         this.isPlayMusic = true
-        this.isGravity = true
+        this.isGravity = 1
+        this.heightRand = Phaser.Math.Between(210, 300)
+
 
         this.text1 = this.add.text(26, 60, '', { color: '#000000', fontFamily: 'Metropolis', fontSize: 12 }).setDepth(50);
         this.text2 = this.add.text(190, 360, '', { color: '#000000', fontFamily: 'Metropolis', fontSize: 20 })
@@ -220,12 +223,14 @@ export default class MainScene extends Phaser.Scene {
         this.congratsGift.setVisible(false)
     }
     buttonMusicOn() {
-        console.log(this.isPlayMusic);
         if (this.isPlayMusic = true) {
-            this.backsound.play()
+            this.backsound.pause()
+            this.isPlayMusic = false
+        }
+        else {
+            this.backsound.resume()
             this.isPlayMusic = true
         }
-
         console.log(this.isPlayMusic);
     }
     buttonRightOn() {
@@ -258,8 +263,9 @@ export default class MainScene extends Phaser.Scene {
     }
     buttonGrabOn() {
         if (this.claw.y == 200) {
+            console.log(this.heightRand);
+            console.log(this.isGravity);
             this.buttonGrab.setScale(0.35, 0.3)
-            this.isGravity = Phaser.Math.Between(0, 1)
             this.claw.setVelocityY(this.speed * this.deltaTime)
             this.movelr.play()
         }
@@ -291,8 +297,12 @@ export default class MainScene extends Phaser.Scene {
 
 
         if (this.gifts) {
+            // console.log(this.heightRand);
+            // console.log(this.isGravity);
             this.gifts.getChildren().forEach(object => {
                 const imageObject = object as any
+
+                
 
                 if (this.claw.y > 201 && imageObject) {
                     this.physics.overlap(this.claw, object, () => {
@@ -300,15 +310,36 @@ export default class MainScene extends Phaser.Scene {
                         // Code to execute when claw and object collide
                         giftArr.push(imageObject)
                         // console.log(giftArr.map((i) => i.name))
-                        imageObject.body!.allowGravity = this.isGravity
-                        this.claw.setVelocityY(-this.speed * delta)
-                        giftArr[0].setY(this.claw.y)
-                        giftArr[0].setX(this.claw.x)
+                        if (this.claw.y < this.heightRand && this.isGravity == 1) {
+                            imageObject.body!.allowGravity = 1
+                            giftArr[0].setY(this.claw.y + 20)
+                            giftArr[0].setX(this.claw.x)
+                        } else {
+
+                            this.claw.setVelocityY(-this.speed * delta)
+                            imageObject.body!.allowGravity = 0
+                            giftArr[0].setY(this.claw.y)
+                            giftArr[0].setX(this.claw.x)
+                        }
+                        // if (this.isGravity = 1) {
+                        // } else if (this.isGravity = 0) {
+                        //     imageObject.body!.allowGravity = 0
+                        //     this.claw.setVelocityY(-this.speed * delta)
+                        //     giftArr[0].setY(this.claw.y)
+                        //     giftArr[0].setX(this.claw.x)
+                        // } else {
+                        //     imageObject.body!.allowGravity = 0
+                        //     this.claw.setVelocityY(-this.speed * delta)
+                        //     giftArr[0].setY(this.claw.y)
+                        //     giftArr[0].setX(this.claw.x)
+                        // }
+
                     });
                 }
 
                 if (imageObject.y > 100 && imageObject.y < 205) {
                     console.log(`you get ${imageObject.name}!`);
+                    this.heightRand = Phaser.Math.Between(205, 300)
                     imageObject.destroy()
                     object.destroy()
                     this.claw.setVelocityY(0)
@@ -365,6 +396,9 @@ export default class MainScene extends Phaser.Scene {
             this.movelr.stop()
             this.claw.setY(200)
             this.claw.setVelocity(0)
+            this.isGravity = Phaser.Math.Between(0, 1)
+            this.heightRand = Phaser.Math.Between(210, 300)
+
         }
     }
 
