@@ -72,11 +72,11 @@ export default class MainScene extends Phaser.Scene {
         this.keyD = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
 
         this.backsound = this.sound.add('bs', { loop: true, volume: 0.5 })
-        this.backsound.play()
+        // this.backsound.play()
         this.movelr = this.sound.add('movelr', { loop: true })
         this.moveUpDown = this.sound.add('moveupdown', { loop: true })
         this.congratsound = this.sound.add('congratsound', { loop: false })
-        this.fall = this.sound.add('fall', { loop: false, volume:5 })
+        this.fall = this.sound.add('fall', { loop: false, volume: 5 })
 
 
         this.congrats = this.add.image(cam.width / 2, cam.height / 2, 'congrats')
@@ -227,7 +227,7 @@ export default class MainScene extends Phaser.Scene {
         this.congratsGift.setVisible(false)
     }
     buttonMusicOn() {
-        if (this.isPlayMusic = true) {
+        if (this.isPlayMusic === true) {
             this.backsound.stop()
             this.isPlayMusic = false
         }
@@ -306,7 +306,7 @@ export default class MainScene extends Phaser.Scene {
             this.gifts.getChildren().forEach(object => {
                 const imageObject = object as any
 
-                
+
 
                 if (this.claw.y > 201 && imageObject) {
                     this.physics.overlap(this.claw, object, () => {
@@ -326,7 +326,7 @@ export default class MainScene extends Phaser.Scene {
                             giftArr[0].setY(this.claw.y)
                             giftArr[0].setX(this.claw.x)
                         }
-                        
+
                     });
                 }
 
