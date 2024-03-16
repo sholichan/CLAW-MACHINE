@@ -72,6 +72,13 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('paket-data2', 'assets/image/paket-data-01-01.png')
         this.load.image('vo-games2', 'assets/image/vo-games-01-01.png')
         
+        this.load.image('gold3', 'assets/image/gold-01-01-01.png')
+        this.load.image('silver3', 'assets/image/silver-01-01-01.png')
+        this.load.image('bronze3', 'assets/image/bronze-01-01-01.png')
+        this.load.image('pln3', 'assets/image/pln-01-01-01.png')
+        this.load.image('pulsa3', 'assets/image/pulsa-01-01-01.png')
+        this.load.image('paket-data3', 'assets/image/paket-data-01-01-01.png')
+        this.load.image('vo-games3', 'assets/image/vo-games-01-01-01.png')
         //SOUND
         this.load.audio('bs','assets/audio/backsound.mp3')
         this.load.audio('congratsound','assets/audio/congratsound.mp3')

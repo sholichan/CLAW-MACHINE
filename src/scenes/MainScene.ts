@@ -33,6 +33,8 @@ export default class MainScene extends Phaser.Scene {
     key!: Array<string>
     description!: Array<string>
     heightRand: any
+    listGifts!: Array<string>
+    listGetGifts!: Phaser.GameObjects.Group
 
     backsound!: any
     congratsound!: any
@@ -55,9 +57,10 @@ export default class MainScene extends Phaser.Scene {
         this.speed = 3
         this.tween = null
         this.isGrab = false
-        this.isPlayMusic = false
+        this.isPlayMusic = true
         this.isGravity = Phaser.Math.Between(0, 1)
         this.heightRand = Phaser.Math.Between(210, 250)
+        this.listGifts = []
 
 
         this.text1 = this.add.text(26, 60, '', { color: '#000000', fontFamily: 'Metropolis', fontSize: 12 }).setDepth(50);
@@ -72,7 +75,7 @@ export default class MainScene extends Phaser.Scene {
         this.keyD = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
 
         this.backsound = this.sound.add('bs', { loop: true, volume: 0.5 })
-        // this.backsound.play()
+        this.backsound.play()
         this.movelr = this.sound.add('movelr', { loop: true })
         this.moveUpDown = this.sound.add('moveupdown', { loop: true })
         this.congratsound = this.sound.add('congratsound', { loop: false })
@@ -87,6 +90,10 @@ export default class MainScene extends Phaser.Scene {
             .setScale(0.1)
             .setVisible(false)
             .setDepth(100)
+        // this.getGift = this.add.image(cam.width / 2, cam.height / 2, 'gold3')
+        //     .setScale(0.35)
+        //     .setVisible(true)
+        //     .setDepth(100)
         this.machine = this.add.image(cam.width / 2, cam.height / 2, 'machine')
             .setScale(0.35)
         this.bgMachine = this.add.image(cam.width / 2, cam.height / 2, 'bg-machine')
@@ -131,6 +138,11 @@ export default class MainScene extends Phaser.Scene {
             .setDepth(102)
             .setVisible(false)
             .setInteractive()
+        // this.buttonKembali = this.add.image(cam.width / 2, 270, 'gold3')
+        //     .setScale(0.1)
+        //     .setDepth(102)
+        //     .setVisible(false)
+        //     .setInteractive()
         this.claw = this.physics.add.image(cam.width / 2, 200, 'claw')
             .setScale(0.35)
             .setOrigin(0.5, 1)
@@ -183,9 +195,34 @@ export default class MainScene extends Phaser.Scene {
         this.setupInputListeners()
     }
 
+    listGiftsGroup(){
+        if (this.listGetGifts==null) {
+            this.listGetGifts = this.add.group({
+                key:this.listGifts[this.listGifts.length],
+                setScale:{x:0.1},
+                setDepth:{z:102},
+                visible:false
+            })
+        }
+        const lenght = this.listGifts.length
+        // const key = this.listGifts[lenght-1]
+        this.listGifts.forEach((item:string,index:number)=>{
+
+            const newList = this.listGetGifts.create(this.cameras.main.width / 2, (index*40)+260, item)
+            .setScale(0.35)
+            .setVisible(true)
+            .setDepth(110)
+        })
+        
+        // console.log(key);
+        // console.log(length);
+        
+    }
+
 
     setupInputListeners() {
         this.buttonGift.on('pointerdown', this.buttonGiftOn, this);
+        this.buttonGift.on('pointerdown', this.listGiftsGroup, this);
         this.buttonKembali.on('pointerdown', this.buttonKembaliOn, this);
         this.buttonOk.on('pointerdown', this.buttonOkOn, this);
         this.buttonMusic.on('pointerdown', this.buttonMusicOn, this);
@@ -200,9 +237,10 @@ export default class MainScene extends Phaser.Scene {
     buttonGiftOn() {
         this.getGift.setVisible(true)
         this.buttonKembali.setVisible(true)
+        // this.listGetGifts.setVisible(true)
         this.tween = this.tweens.add(
             {
-                targets: [this.getGift, this.buttonKembali],
+                targets: [this.getGift, this.buttonKembali,this.listGetGifts],
                 scaleX: 0.35,
                 scaleY: 0.35,
                 duration: 1000,
@@ -214,6 +252,8 @@ export default class MainScene extends Phaser.Scene {
     buttonKembaliOn() {
         this.buttonKembali.setVisible(false)
         this.getGift.setVisible(false)
+        this.listGetGifts.setVisible(false)
+        this.listGetGifts.scaleXY(0.1)
         this.buttonKembali.setScale(0.1)
         this.getGift.setScale(0.1)
     }
@@ -317,6 +357,7 @@ export default class MainScene extends Phaser.Scene {
                             this.fall.play()
                             this.moveUpDown.stop()
                             imageObject.body!.allowGravity = 1
+                            // giftArr[0].setY(this.claw.y)
                             giftArr[0].setY(this.claw.y + 20)
                             giftArr[0].setX(this.claw.x)
                         } else {
@@ -332,14 +373,15 @@ export default class MainScene extends Phaser.Scene {
 
                 if (imageObject.y > 100 && imageObject.y < 205) {
                     console.log(`you get ${imageObject.name}!`);
+                    this.listGifts.push(`${imageObject.name}3`)
                     this.heightRand = Phaser.Math.Between(205, 300)
                     imageObject.destroy()
                     object.destroy()
                     this.claw.setVelocityY(0)
                     this.claw.setY(200)
                     this.displayGift(imageObject.name)
-                    this.congratsGift = this.add.image(this.cameras.main.width / 2 - 5, 300, `${imageObject.name}2`)
-                        .setScale(0.1)
+                    this.congratsGift = this.add.image(this.cameras.main.width / 2 - 5, 285, `${imageObject.name}2`)
+                        .setScale(0.2)
                         .setDepth(101)
                         .setVisible(true)
 
@@ -394,9 +436,6 @@ export default class MainScene extends Phaser.Scene {
 
         }
     }
-
-
-
 
 }
 
